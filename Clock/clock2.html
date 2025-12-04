@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
-<body style="background-color:pink" onload="startTime()">
+<body style="background-color:white" onload="startTime()">
 
-  <canvas id="canvas" width="1000px" height="1000px" style="background-color:pink"></canvas>  
+  <canvas id="canvas" width="1000px" height="1000px" style="background-color:transparent"></canvas>  
     
   <div style="display: inline-block; vertical-align: top; align-content: center;">
-    <div id="time" style="background-color:pink; color: black; font-size: 160pt; font-weight: bold;"></div>
+    <div id="time" style="background-color:transparent; color: black; font-size: 160pt; font-weight: bold;"></div>
     <br />
-    <div id="day" style="background-color:pink; color: black; font-size: 80pt; font-weight: bold;"></div>
+    <div id="day" style="background-color:transparent; color: black; font-size: 80pt; font-weight: bold;"></div>
     <br />
-    <div id="date" style="background-color:pink; color: black; font-size: 80pt; font-weight: bold;"></div>
+    <div id="date" style="background-color:transparent; color: black; font-size: 80pt; font-weight: bold;"></div>
     <br />
-    <div id="date_" style="background-color:pink; color: black; font-size: 80pt; font-weight: bold; "></div>
+    <div id="date_" style="background-color:transparent; color: black; font-size: 80pt; font-weight: bold; "></div>
 
     <h1 style="color: black; font-size: 112pt; margin-bottom: 0%;"><time>00:00:00</time></h1>
     <button id="start" style="width: 200px; height: 70px; font-size: 36pt;">Start</button>
     <button id="stop" style="width: 200px; height: 70px; font-size: 36pt;">Stop</button>
     <button id="clear" style="width: 200px; height: 70px; font-size: 36pt;">Clear</button>
   </div>
-  <div  style="background-color:pink; color: black; font-size: 48pt; font-family: Cursive; font-weight: bold; text-align: center;">Ceci n'est pas une montre</div>
+  <div  style="background-color:transparent; color: black; font-size: 48pt; font-family: Cursive; font-weight: bold; text-align: center;">Ceci n'est pas une montre</div>
 
     <script>
       var canvas = document.getElementById("canvas");
@@ -29,9 +29,9 @@
       setInterval(drawClock, 1000);
 
       // set colors
-      const col_number = "#965d4f";
-      const col_lines = "#43403d";
-      const col_central_dot = "#43403d";
+      const col_number = "black";//"#965d4f";
+      const col_lines = "black"; //"#43403d";
+      const col_central_dot = "black";//"#43403d";
 
 
       function drawClock() {
@@ -44,7 +44,7 @@
         var grad;
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "pink";
+        ctx.fillStyle = "white";
         ctx.fill();
         const ratio = 0.9;
 
@@ -58,12 +58,15 @@
         base_image = new Image();
 
         // if ((minute == 8) | (second == 0)) {
-        if ((hour < 5) | (hour > 16)) {
-          base_image.src = './Picture_3.png';
-        } else if ((hour < 14) | (hour > 12)) {
-  	  base_image.src = './Picture_4.png';
-        } else {
+        if ((hour >= 5 && hour <= 12) || (hour >= 14 && hour <= 16)) {
           base_image.src = './Picture_1.png';
+    	  document.body.style.backgroundColor = "white";
+        } else if (hour > 12 && hour < 14) {
+  	  base_image.src = './Picture_4.png';
+          document.body.style.backgroundColor  = "pink";
+        } else {
+          base_image.src = './Picture_3.png';
+          document.body.style.backgroundColor  = "grey";
         }
 
         
@@ -115,18 +118,39 @@
           (minute * Math.PI / (6 * 60)) +
           (second * Math.PI / (360 * 60));
 
+        //if (second == 0) {
         if ((minute == 0) && (second == 0)) {
           //alert("Here");
-          var audio = new Audio('./song1.mp3');
+          //var audio = new Audio('./song1.mp3');
+          // Generate random number between 1 and 5
+          var randomNum = Math.floor(Math.random() * 5) + 1;
+          var audio = new Audio('./song' + randomNum + '.mp3');
+          
+          audio.currentTime = 10;
           setTimeout(function(){
             audio.play();
 
             setTimeout(function(){
                 audio.pause();
                 audio.currentTime = 0;
-            }, 30000);
+            }, 15000);
         }, 1000);
         }
+        
+        if ((hour == 12) && (minute == 30) && (second == 0)) {
+          var audio = new Audio('./HM.mp3');
+          
+          audio.currentTime = 16;
+          setTimeout(function(){
+            audio.play();
+
+            setTimeout(function(){
+                audio.pause();
+                audio.currentTime = 0;
+            }, 60000);
+        }, 1000);
+        }
+        
         drawHand(ctx, hour, radius * 0.5, radius * 0.07);
         //minute
         minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
