@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<body style="background-color:white">
+
+  <canvas id="canvas" width="1000px" height="1000px" style="background-color:white"></canvas>  
+    
+  <div style="display: inline-block; vertical-align: top; align-content: center;">
+    <div id="time" style="background-color:white; color: black; font-size: 160pt; font-weight: bold;"></div>
+    <br />
+    <div id="day" style="background-color:white; color: black; font-size: 80pt; font-weight: bold;"></div>
+    <br />
+    <div id="date" style="background-color:white; color: black; font-size: 80pt; font-weight: bold;"></div>
+    <br />
+    <div id="date_" style="background-color:white; color: black; font-size: 80pt; font-weight: bold; "></div>
+
+    <h1 style="color: black; font-size: 112pt; margin-bottom: 0%;"><time>00:00:00</time></h1>
+    <button id="start" style="width: 200px; height: 70px; font-size: 36pt;">Start</button>
+    <button id="stop" style="width: 200px; height: 70px; font-size: 36pt;">Stop</button>
+    <button id="clear" style="width: 200px; height: 70px; font-size: 36pt;">Clear</button>
+  </div>
+  <div  style="background-color:white; color: black; font-size: 48pt; font-family: Cursive; font-weight: bold; text-align: center;">Ceci n'est pas une montre</div>
+
+  <body onload="startTime()">
+    <script>
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
+      var radius = canvas.height / 2;
+      ctx.translate(radius, radius);
+      radius = radius * 0.90
+      setInterval(drawClock, 1000);
+
+      // set colors
+      const col_number = "#965d4f";
+      const col_lines = "#43403d";
+      const col_central_dot = "#43403d";
+
+
+      function drawClock() {
+        drawFace(ctx, radius);
+        drawNumbers(ctx, radius);
+        drawTime(ctx, radius);
+      }
+
+      function drawFace(ctx, radius) {
+        var grad;
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+        const ratio = 0.9;
+
+        // Make conditional changes
+
+        var now = new Date();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
+
+        base_image = new Image();
+
+        // if ((minute == 8) | (second == 0)) {
+        if ((hour < 5) | (hour > 16)) {
+          base_image.src = './Picture 3.png';
+        } else {
+          base_image.src = './Picture 1.png';
+        }
+
+        
+        
+        ctx.drawImage(base_image, 0-radius*ratio, 0-radius*ratio, radius*2*ratio, radius*2*ratio);
+        grad = ctx.createRadialGradient(0, 0, radius * 0.95, 0, 0, radius * 1.05);
+        grad.addColorStop(0, 'black');
+        grad.addColorStop(0.5, '#6e86b4');
+        grad.addColorStop(1, 'black');
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = radius * 0.1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+        ctx.fillStyle = col_central_dot;
+        ctx.fill();
+      }
+
+      function drawNumbers(ctx, radius) {
+        var ang;
+        var num;
+        ctx.font = radius * 0.15 + "px arial";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        oth_nums = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XI', 'XXII', 'XXIII', 'XXIV'];
+        for (num = 1; num < 13; num++) {
+          ang = num * Math.PI / 6;
+          ctx.rotate(ang);
+          ctx.translate(0, -radius * 0.85);
+          ctx.rotate(-ang);
+          // ctx.fillText(num.toString(), 0, 0);
+          ctx.fillText(oth_nums[num-1].toString(), 0, 0);
+          ctx.font = "bold 46pt Arial";
+          ctx.fillStyle = col_number;
+          ctx.rotate(ang);
+          ctx.translate(0, radius * 0.85);
+          ctx.rotate(-ang);
+        }
+      }
+
+      function drawTime(ctx, radius) {
+        var now = new Date();
+        var hour = now.getHours();
+        var minute = now.getMinutes();
+        var second = now.getSeconds();
+        //hour
+        hour = hour % 12;
+        hour = (hour * Math.PI / 6) +
+          (minute * Math.PI / (6 * 60)) +
+          (second * Math.PI / (360 * 60));
+
+        if ((minute == 47) & (second == 0)) {
+          //alert("Here");
+          var audio = new Audio('0002606.mp3');
+          setTimeout(function(){
+            audio.play();
+
+            setTimeout(function(){
+                audio.pause();
+                audio.currentTime = 0;
+            }, 12000);
+        }, 1000);
+        }
+        drawHand(ctx, hour, radius * 0.5, radius * 0.07);
+        //minute
+        minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
+        drawHand(ctx, minute, radius * 0.8, radius * 0.07);
+        // second
+        second = (second * Math.PI / 30);
+        drawHand(ctx, second, radius * 0.9, radius * 0.02);
+      }
+
+      function drawHand(ctx, pos, length, width) {
+        ctx.beginPath();
+        ctx.strokeStyle = col_lines;
+        ctx.lineWidth = width;
+        ctx.lineCap = "round";
+        ctx.moveTo(0, 0);
+        ctx.rotate(pos);
+        ctx.lineTo(0, -length);
+        ctx.stroke();
+        ctx.rotate(-pos);
+        ctx.strokeStyle = col_lines;
+      }
+
+      var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+      function startTime() {
+        var today = new Date();
+        var h = today.getHours();
+        var m = today.getMinutes();
+        var s = today.getSeconds();
+        m = checkTime(m);
+        s = checkTime(s);
+
+        document.getElementById('time').innerHTML = h + ":" + m + ":" + s;
+
+        document.getElementById('day').innerHTML = days[today.getDay()];
+
+        document.getElementById('date').innerHTML =
+          months[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear()
+
+        document.getElementById('date_').innerHTML =
+          today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear()
+
+        var t = setTimeout(startTime, 500);
+      }
+
+      function checkTime(i) {
+        if (i < 10) { i = "0" + i };  // add zero in front of numbers < 10
+        return i;
+      }
+
+      var h1 = document.getElementsByTagName('h1')[0],
+          start = document.getElementById('start'),
+          stop = document.getElementById('stop'),
+          clear = document.getElementById('clear'),
+          seconds = 0, minutes = 0, hours = 0,
+          t;
+
+        function add() {
+          seconds++;
+          if (seconds >= 60) {
+            seconds = 0;
+            minutes++;
+            if (minutes >= 60) {
+              minutes = 0;
+              hours++;
+            }
+          }
+
+          h1.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+
+          timer();
+        }
+
+        function timer() {
+          t = setTimeout(add, 1000);
+        }
+
+        /* Start button */
+        start.onclick = timer;
+
+        /* Stop button */
+        stop.onclick = function () {
+          clearTimeout(t);
+        }
+
+        /* Clear button */
+        clear.onclick = function () {
+          h1.textContent = "00:00:00";
+          seconds = 0; minutes = 0; hours = 0;
+        }
+    </script>
+  </body>
+</html>
