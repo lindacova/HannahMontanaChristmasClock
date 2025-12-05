@@ -58,10 +58,10 @@
         base_image = new Image();
 
         // if ((minute == 8) | (second == 0)) {
-        if ((hour >= 5 && hour <= 12) || (hour >= 14 && hour <= 16)) {
+        if ((hour >= 5 && hour < 12) || (hour >= 14 && hour <= 16)) {
           base_image.src = './Picture_1.png';
     	  document.body.style.backgroundColor = "white";
-        } else if (hour > 12 && hour < 14) {
+        } else if (hour >= 12 && hour < 14) {
   	  base_image.src = './Picture_4.png';
           document.body.style.backgroundColor  = "pink";
         } else {
@@ -118,38 +118,6 @@
           (minute * Math.PI / (6 * 60)) +
           (second * Math.PI / (360 * 60));
 
-        //if (second == 0) {
-        if ((minute == 0) && (second == 0)) {
-          //alert("Here");
-          //var audio = new Audio('./song1.mp3');
-          // Generate random number between 1 and 5
-          var randomNum = Math.floor(Math.random() * 5) + 1;
-          var audio = new Audio('./song' + randomNum + '.mp3');
-          
-          audio.currentTime = 10;
-          setTimeout(function(){
-            audio.play();
-
-            setTimeout(function(){
-                audio.pause();
-                audio.currentTime = 0;
-            }, 15000);
-        }, 1000);
-        }
-        
-        if ((hour == 12) && (minute == 30) && (second == 0)) {
-          var audio = new Audio('./HM.mp3');
-          
-          audio.currentTime = 16;
-          setTimeout(function(){
-            audio.play();
-
-            setTimeout(function(){
-                audio.pause();
-                audio.currentTime = 0;
-            }, 60000);
-        }, 1000);
-        }
         
         drawHand(ctx, hour, radius * 0.5, radius * 0.07);
         //minute
@@ -195,6 +163,37 @@
           today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear()
 
         var t = setTimeout(startTime, 500);
+        
+        //if (second == 0) {
+        if ((m == 0) && (s == 0)) {
+          //alert("Here");
+          //var audio = new Audio('./song1.mp3');
+          // Generate random number between 1 and 5
+          var randomNum = Math.floor(Math.random() * 5) + 1;
+          var audio = new Audio('./song' + randomNum + '.mp3');
+          
+          audio.currentTime = 10;
+          setTimeout(function(){
+            audio.play();
+
+            setTimeout(function(){
+                audio.pause();
+                audio.currentTime = 0;
+            }, 15000);
+        }, 1000);
+        } else if ((h == 12) && (minute == 30) && (s == 0)) { 
+          var audio = new Audio('./HM.mp3');
+          
+          audio.currentTime = 16;
+          setTimeout(function(){
+            audio.play();
+
+            setTimeout(function(){
+                audio.pause();
+                audio.currentTime = 0;
+            }, 60000);
+        }, 1000);
+        }
       }
 
       function checkTime(i) {
